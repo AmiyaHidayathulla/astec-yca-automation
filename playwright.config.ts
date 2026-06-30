@@ -29,6 +29,7 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: 'https://test-astec-yca-v2.ycalabs.com/',
     trace: 'on-first-retry',
   },
 
