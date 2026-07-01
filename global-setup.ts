@@ -6,18 +6,15 @@ async function globalSetup(config: FullConfig) {
 
   await page.goto('https://test-astec-yca-v2.ycalabs.com/');
 
-  // Fill login form using placeholder text
+  // Fill login form
   await page.getByPlaceholder('Username').fill('emp1811@ycalabs.com');
   await page.getByPlaceholder('Password').fill('12345678');
-
-  // Click the Login button
   await page.getByRole('button', { name: 'Login' }).click();
 
-  // Wait for navigation after successful login
-  // ⚠️ Update this to match the actual post-login URL/page
+  // Wait for redirect back to YCA after Keycloak authentication
   await page.waitForURL('https://test-astec-yca-v2.ycalabs.com/home', { timeout: 15000 });
 
-  // Save the logged-in session state
+  // Save session
   await page.context().storageState({ path: 'storageState.json' });
 
   await browser.close();
