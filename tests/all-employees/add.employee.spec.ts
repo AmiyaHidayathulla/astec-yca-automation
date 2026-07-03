@@ -14,13 +14,13 @@ test.describe('Employee Module - CRUD Operations', () => {
   });
 
   // ============================================
-  // ADD EMPLOYEE - SAVE AS DRAFT (from List View)
+  // ADD EMPLOYEE - SAVE AS DRAFT (from Grid View)
   // ============================================
   test('TC_EMP_002: Add Employee as Draft from List View', async ({ page }) => {
     await page.goto('/home');
 
     // Navigate to All Employees
-   await page.getByRole('button', { name: 'Employee' }).click();
+    await page.getByRole('button', { name: 'Employee' }).click();
     await page.getByRole('link', { name: 'All Employees' }).click();
     await page.waitForLoadState('networkidle');
 
@@ -30,38 +30,32 @@ test.describe('Employee Module - CRUD Operations', () => {
     // Verify Add New Employee page
     await expect(page.getByRole('heading', { name: 'Add New Employee' })).toBeVisible();
 
+    // Generate unique data for every test run
+    const timestamp = Date.now();
+    const firstName = `John${timestamp}`;
+    const lastName = `TestDraft${timestamp}`;
+    const email = `john.test${timestamp}@ycalabs.com`;
 
-  // Generate unique data for every test run
-const timestamp = Date.now();
-const firstName = `John${timestamp}`;
-const lastName = `TestDraft${timestamp}`;
-const email = `john.test${timestamp}@ycalabs.com`;
+    // Fill required fields
+    await page.locator('#field-firstName').getByTestId('input-input').fill(firstName);
+    await page.locator('#field-lastName').getByTestId('input-input').fill(lastName);
+    await page.locator('input[type="email"]').fill(email);
 
-// Fill required fields
-await page.locator('#field-firstName').getByTestId('input-input').fill(firstName);
-await page.locator('#field-lastName').getByTestId('input-input').fill(lastName);
-await page.locator('input[type="email"]').fill(email);
+    // Select Department dropdown
+    await page.locator('#field-department').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
 
-// Select Department dropdown
-await page.locator('#field-department').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
+    // Select Position dropdown
+    await page.locator('#field-position').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
 
-// Select Position dropdown
-await page.locator('#field-position').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
-
-// Select Location dropdown
-await page.locator('#field-location').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
+    // Select Location dropdown
+    await page.locator('#field-location').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
 
     // Click Save as Draft
     await page.getByRole('button', { name: 'Save as draft' }).click();
     await page.waitForLoadState('networkidle');
-
-//     // Navigate to Draft Employees tab and verify
-//    await page.getByRole('button', { name: 'Employee' }).click();
-//     await page.getByRole('link', { name: 'All Employees' }).click();
-//     await page.waitForLoadState('networkidle');
 
     // Click Draft Employees tab
     await page.getByRole('button', { name: 'List View' }).click();
@@ -69,17 +63,16 @@ await page.getByRole('option').first().click();
     await page.waitForLoadState('networkidle');
 
     // Verify the draft employee appears in the list
-    
     await page.getByPlaceholder('Search name / email').fill(email);
     await page.waitForLoadState('networkidle');
 
-// Then verify
-await expect(page.getByText(firstName)).toBeVisible();
-await expect(page.getByText(email)).toBeVisible();
+    // Then verify
+    await expect(page.getByText(firstName)).toBeVisible();
+    await expect(page.getByText(email)).toBeVisible();
   });
 
   // ============================================
-  // ADD EMPLOYEE - SAVE & INVITE (from List View)
+  // ADD EMPLOYEE - SAVE & INVITE (from Grid View)
   // ============================================
   test('TC_EMP_003: Add Employee with Save & Invite from List View', async ({ page }) => {
     await page.goto('/home');
@@ -96,35 +89,31 @@ await expect(page.getByText(email)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Add New Employee' })).toBeVisible();
 
     // Generate unique data for every test run
-const timestamp = Date.now();
-const firstName = `Mary${timestamp}`;
-const lastName = `TestDraft${timestamp}`;
-const email = `mary.test${timestamp}@ycalabs.com`;
+    const timestamp = Date.now();
+    const firstName = `Mary${timestamp}`;
+    const lastName = `TestDraft${timestamp}`;
+    const email = `mary.test${timestamp}@ycalabs.com`;
 
-// Fill required fields
-await page.locator('#field-firstName').getByTestId('input-input').fill(firstName);
-await page.locator('#field-lastName').getByTestId('input-input').fill(lastName);
-await page.locator('input[type="email"]').fill(email);
+    // Fill required fields
+    await page.locator('#field-firstName').getByTestId('input-input').fill(firstName);
+    await page.locator('#field-lastName').getByTestId('input-input').fill(lastName);
+    await page.locator('input[type="email"]').fill(email);
 
-// Select Department dropdown
-await page.locator('#field-department').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
+    // Select Department dropdown
+    await page.locator('#field-department').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
 
-// Select Position dropdown
-await page.locator('#field-position').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
+    // Select Position dropdown
+    await page.locator('#field-position').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
 
-// Select Location dropdown
-await page.locator('#field-location').getByTestId('popover-popover-primitive.trigger').click();
-await page.getByRole('option').first().click();
+    // Select Location dropdown
+    await page.locator('#field-location').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
+
     // Click Save & Invite
     await page.getByRole('button', { name: 'Save & Invite' }).click();
     await page.waitForLoadState('networkidle');
-
-    // // Navigate back to All Employees
-    // await page.getByRole('link', { name: 'Employee' }).click();
-    // await page.getByRole('link', { name: 'All Employees' }).click();
-    // await page.waitForLoadState('networkidle');
 
     // Click All Employees tab
     await page.getByRole('button', { name: 'List View' }).click();
@@ -133,17 +122,15 @@ await page.getByRole('option').first().click();
 
     // Verify employee appears in All Employees list
     await page.getByPlaceholder('Search name / email').fill(email);
-await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle');
 
-// Then verify
-await expect(page.getByText(firstName)).toBeVisible();
-await expect(page.getByText(email)).toBeVisible();
+    // Then verify
+    await expect(page.getByText(firstName)).toBeVisible();
+    await expect(page.getByText(email)).toBeVisible();
   });
 
-
-
   // ============================================
-  // NEGATIVE - Add Employee with missing fields
+  // NEGATIVE - Add Employee with missing fields from Grid view
   // ============================================
   test('TC_EMP_006: Add Employee with missing required fields', async ({ page }) => {
     await page.goto('/home');
@@ -162,7 +149,7 @@ await expect(page.getByText(email)).toBeVisible();
   });
 
   // ============================================
-  // CANCEL Add Employee
+  // CANCEL Add Employee - From Grid View
   // ============================================
   test('TC_EMP_007: Cancel Add Employee returns to list', async ({ page }) => {
     await page.goto('/home');
