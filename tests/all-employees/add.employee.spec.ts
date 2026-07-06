@@ -292,4 +292,72 @@ test.describe('Employee Module - CRUD Operations', () => {
     await expect(page.getByText(email)).toBeVisible();
   });
 
+test('TC_EMP_008: Add Employee with Save & Invite from List View with all the fields added', async ({ page }) => {
+    await page.goto('/home');
+
+    // Navigate to All Employees
+    await page.getByRole('button', { name: 'Employee' }).click();
+    await page.getByRole('link', { name: 'All Employees' }).click();
+    await page.waitForLoadState('networkidle');
+
+    // Click Add Employee button
+    await page.getByRole('button',{ name: 'List View'}).click();
+
+    await page.getByRole('button', { name: 'Add Employee' }).click();
+
+    // Verify Add New Employee page
+    await expect(page.getByRole('heading', { name: 'Add New Employee' })).toBeVisible();
+
+    // Generate unique data for every test run
+    const timestamp = Date.now();
+    const firstName = `Mary${timestamp}`;
+    const lastName = `TestDraft${timestamp}`;
+    const email = `mary.test${timestamp}@ycalabs.com`;
+
+    // Fill required fields
+    await page.locator('#field-firstName').getByTestId('input-input').fill(firstName);
+    await page.locator('#field-lastName').getByTestId('input-input').fill(lastName);
+    await page.locator('input[type="email"]').fill(email);
+
+    // Select Department dropdown
+    await page.locator('#field-department').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
+
+    // Select Position dropdown
+    await page.locator('#field-position').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
+
+    // Select Location dropdown
+    await page.locator('#field-location').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByRole('option').first().click();
+
+    //adding other fields
+    await page.locator('#field-userGroup').getByTestId('popover-popover-primitive.trigger').click();
+    await page.getByText('Manager').click();
+    await page.getByTestId('custom-date-picker-input').click();
+    await page.getByLabel('Choose the Month').selectOption('1');
+    await page.getByLabel('Choose the Year').selectOption('2002');
+    await page.getByRole('button', { name: 'Tuesday, February 12th,' }).click();
+    await page.getByTestId('input-input').nth(3).fill('EMP105');
+    await page.getByTestId('input-input').nth(4).fill('1005423');
+
+
+    // Click Save & Invite
+    await page.getByRole('button', { name: 'Save & Invite' }).click();
+    await page.waitForLoadState('networkidle');
+
+    // Click All Employees tab
+    await expect(page).toHaveURL('https://test-astec-yca-v2.ycalabs.com/employee/employee-list-view');
+    await page.getByRole('button', { name: /All Employees/ }).click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify employee appears in All Employees list
+    await page.getByPlaceholder('Search name / email').fill(email);
+    await page.waitForLoadState('networkidle');
+
+    // Then verify
+    await expect(page.getByText(firstName)).toBeVisible();
+    await expect(page.getByText(email)).toBeVisible();
+  });
+
 });
