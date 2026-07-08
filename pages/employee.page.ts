@@ -60,6 +60,35 @@ export class EmployeePage {
   cancelButton = () => this.page.getByRole('button', { name: 'Cancel' });
 
   // ============================================
+// Locators - List View Operations
+// ============================================
+teamFilter = () => this.page.getByRole('combobox').filter({ hasText: 'Select Team' });
+departmentFilter = () => this.page.getByRole('combobox').filter({ hasText: 'Department' });
+positionFilter = () => this.page.getByRole('combobox').filter({ hasText: 'Position' });
+locationFilter = () => this.page.getByRole('combobox').filter({ hasText: 'Location' });
+userGroupFilter = () => this.page.getByRole('combobox').filter({ hasText: 'User Group' });
+statusFilter = () => this.page.getByRole('combobox').filter({ hasText: 'All Status' });
+
+// ============================================
+// Locators - Table Row Actions
+// ============================================
+tableRow = (index: number) => this.page.getByTestId(`data-table-row-${index}`);
+viewButtonInRow = (index: number) => 
+  this.tableRow(index).locator('td:last-child button:nth-child(1)');
+
+editButtonInRow = (index: number) => 
+  this.tableRow(index).locator('td:last-child button:nth-child(2)');
+
+assignButtonInRow = (index: number) => 
+  this.tableRow(index).locator('td:last-child button:nth-child(3)');
+
+emailButtonInRow = (index: number) => 
+  this.tableRow(index).locator('td:last-child button:nth-child(4)');
+
+deleteButtonInRow = (index: number) => 
+  this.tableRow(index).locator('td:last-child button:nth-child(5)');
+
+  // ============================================
   // Actions - Navigation
   // ============================================
   async navigateToAllEmployees() {
@@ -226,4 +255,99 @@ export class EmployeePage {
   async verifyOnAddEmployeePage() { // 
     await expect(this.page.getByRole('heading', { name: 'Add New Employee' })).toBeVisible();
   }
+
+  async allEmployeesOperations() {
+    await this.allEmployeesTab().click();
+    await this.page.waitForLoadState('networkidle');
+
+  }
+  // ============================================
+// Actions - List View Operations
+// ============================================
+async searchByName(name: string) {
+  await this.searchInput().fill(name);
+  await this.page.waitForLoadState('networkidle');
+}
+
+async filterByDepartment(department: string) {
+  await this.departmentFilter().click();
+  await this.page.getByRole('option', { name: department }).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async filterByPosition(position: string) {
+  await this.positionFilter().click();
+  await this.page.getByRole('option', { name: position }).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async filterByLocation(location: string) {
+  await this.locationFilter().click();
+  await this.page.getByRole('option', { name: location }).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async filterByUserGroup(userGroup: string) {
+  await this.userGroupFilter().click();
+  await this.page.getByRole('option', { name: userGroup }).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async filterByStatus(status: string) {
+  await this.statusFilter().click();
+  await this.page.getByRole('option', { name: status }).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+// async getEmployeeCount(): Promise<number> {
+//   await this.page.waitForLoadState('networkidle');
+//   const rows = this.page.getByRole('row');
+//   return await rows.count() - 1; // minus header row
+// }
+
+async clickViewEmployee(rowIndex: number) {
+  await this.viewButtonInRow(rowIndex).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async clickEditEmployee(rowIndex: number) {
+  await this.editButtonInRow(rowIndex).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async clickDeleteEmployee(rowIndex: number) {
+  await this.deleteButtonInRow(rowIndex).click();
+  await this.page.waitForLoadState('networkidle');
+}
+
+async getEmployeeCount(): Promise<number> {
+  await this.page.waitForLoadState('networkidle');
+  await this.page.waitForTimeout(1000);
+  let count = 0;
+  while (true) {
+    const exists = await this.page.getByTestId(`data-table-row-${count}`).count() > 0;
+    if (!exists) break;
+    count++;
+  }
+  return count;
+}
+
+async verifyEmployeeCountGreaterThan(count: number) {
+  const actualCount = await this.getEmployeeCount();
+  expect(actualCount).toBeGreaterThan(count);
+}
+
+async verifySearchResults(searchText: string) {
+  await this.page.waitForLoadState('networkidle');
+  let rowIndex = 0;
+  while (true) {
+    const row = this.page.getByTestId(`data-table-row-${rowIndex}`);
+    const isVisible = await row.isVisible().catch(() => false);
+    if (!isVisible) break;
+
+    const rowText = await row.textContent();
+    expect(rowText?.toLowerCase()).toContain(searchText.toLowerCase());
+    rowIndex++;
+  }
+}
 }
